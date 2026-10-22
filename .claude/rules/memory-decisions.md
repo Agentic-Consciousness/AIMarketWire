@@ -11,6 +11,7 @@ Each entry: `[YYYY-MM-DD] Decision — Rationale`
 
 <!-- Claude: add new entries at the top -->
 
+- [2026-10-22] Pin Node.js to 22.23.4 (`>=22.23.4 <23`) — Oct 21 2026 security releases fix high CVEs including Brotli RCE CVE-2026-111497 on 22/24/26 only; Node 20 is unpatched. Vercel setting must be 22.x and needs a redeploy.
 - [2026-02-28] Semver + git tags for versioning — npm version patch/minor/major scripts, NEXT_PUBLIC_APP_VERSION injected at build time, version badge in shared Footer
 - [2026-02-28] Shared Footer component — extracted from 6 duplicated footers into src/components/Footer.tsx with activePath and maxWidth props
 - [2026-02-28] Slug URLs over UUIDs — SEO-friendly, generateUniqueSlug(title, id) appends 8-char UUID suffix for uniqueness

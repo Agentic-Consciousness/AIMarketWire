@@ -11,6 +11,7 @@ Each entry: `[YYYY-MM-DD] Learning — Context`
 
 <!-- Claude: add new entries at the top -->
 
+- [2026-10-22] Vercel Node.js versions are majors only — Settings → Build and Deployment → Node.js Version. `engines.node` overrides that setting. A range like `>=22.0.0` (no upper bound) deploys the latest 24.x; `>=22.23.4 <23` stays on 22.x. Vercel rolls the patch itself, so `.nvmrc` 22.23.4 does not pin the deployment patch. Changing the setting does not update live deployments until a redeploy. Node 20 was deprecated on Vercel on 1 Oct 2026 and got no fix in the 21 Oct 2026 security releases.
 - [2026-03-01] Vercel env vars can have hidden newlines — LLM_PROVIDER was "claude\n" in dashboard even though it looked clean. Always .trim() env vars used for lookups, or better: delete unnecessary env vars that have code defaults.
 - [2026-03-01] Vercel Git integration is repo-specific — pushing to HallyAus/AI-News didn't trigger deploys because Vercel was connected to HallyAus/AIMarketWire. Always verify `git remote -v` matches the Vercel-connected repo.
 - [2026-03-01] generateStaticParams + API fetch = build timeout — category pages with generateStaticParams tried to fetch from localhost API during build, which isn't running. Use force-dynamic for pages that need runtime API data.

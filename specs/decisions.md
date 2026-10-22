@@ -16,6 +16,18 @@
 
 <!-- Claude: add new entries at the top with incrementing ADR number -->
 
+### ADR-007: Pin Node.js to 22.23.4 — 2026-10-22
+
+**Status:** Accepted
+
+**Context:** The 21 October 2026 Node.js security releases fix high-severity issues, including Brotli decoder remote code execution (CVE-2026-111497), on 22.23.4, 24.22.1, and 26.12.1. Node.js 20 is end-of-life and receives no fix. This app had no runtime pin and `@types/node` was `^20`.
+
+**Decision:** Pin local and CI-style runtimes to 22.23.4 via `.nvmrc`, and set `package.json` `engines.node` to `>=22.23.4 <23`. Bump `@types/node` to `^22`. Stay on the 22.x line (the upper bound excludes 23+). Vercel only offers major versions and rolls patches itself; the project Node.js Version setting must be 22.x, and production needs a redeploy. There is no GitHub Actions workflow, so no `setup-node` pin was required.
+
+**Consequences:** Installs on Node 20 fail the engines range. Vercel deploys its latest 22.x that satisfies the range, not the exact patch in `.nvmrc`. A dashboard setting of 24.x, or an engines range without `<23`, would leave 22.x. Existing deployments keep the previous runtime until redeployed.
+
+---
+
 ### ADR-006: Relevance Threshold at 40 — 2026-02-25
 
 **Status:** Accepted
