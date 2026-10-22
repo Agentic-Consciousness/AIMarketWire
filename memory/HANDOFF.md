@@ -5,14 +5,20 @@
 
 ## Last Updated
 
-- **Date:** 2026-03-01
-- **Branch:** main
+- **Date:** 2026-10-22
+- **Branch:** cursor/node-22-security-pin-ab1d
 - **Version:** v1.0.0
-- **Focus:** SEO, slug URLs, versioning, shared Footer, deployment fix, ingestion.
+- **Focus:** Pin Node.js to 22.23.4 after the 21 Oct 2026 security releases.
 
 ## Accomplished
 
-### This Session (2026-02-28 → 2026-03-01)
+### This Session (2026-10-22)
+- Pinned the runtime off unpatched Node 20: `.nvmrc` and `.node-version` are `22.23.4`, `package.json` `engines.node` is `>=22.23.4 <23`, `@types/node` is `^22` (lockfile `22.20.5`)
+- No GitHub Actions workflow exists, so there is no `actions/setup-node` step to pin
+- Verified on Node v22.23.4: `pnpm install`, `pnpm lint`, `pnpm exec tsc --noEmit`, and `pnpm build` all passed
+- Vercel only offers major Node versions and `engines` overrides the dashboard. Set Project Settings → Build and Deployment → Node.js Version to **22.x**, then redeploy. An engines range without `<23` would deploy 24.x
+
+### Previous session (2026-02-28 → 2026-03-01)
 - Completed slug URL migration: RSS feed, category pages now use article.slug
 - Security headers in next.config.ts: HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy
 - 301 redirects: /?category= → /category/, www → apex domain
@@ -42,15 +48,16 @@ _None._
 
 ## Next Steps
 
-1. Run more ingestion batches — ~97 unprocessed articles remain in backlog
-2. Upgrade to Vercel Pro for hourly cron (currently daily)
-3. Delete `LLM_PROVIDER` env var from Vercel dashboard (defaults to "claude", avoids newline bug)
-4. Set up monitoring/alerting for ingestion failures
-5. Tune relevance threshold after more data (currently 40)
-6. Add search functionality
-7. GitHub release notes for v1.0.0
-8. Consider Proxmox worker for more frequent ingestion
-9. Also push to HallyAus/AI-News repo to keep it in sync (or archive it)
+1. In the Vercel project (danieljhall-mecoms-projects/aimarketwire), set Node.js Version to 22.x and redeploy so production leaves Node 20. Confirm the build log reports Node >= 22.23.4 (Vercel rolls the 22.x patch itself)
+2. Run more ingestion batches — ~97 unprocessed articles remain in backlog
+3. Upgrade to Vercel Pro for hourly cron (currently daily)
+4. Delete `LLM_PROVIDER` env var from Vercel dashboard (defaults to "claude", avoids newline bug)
+5. Set up monitoring/alerting for ingestion failures
+6. Tune relevance threshold after more data (currently 40)
+7. Add search functionality
+8. GitHub release notes for v1.0.0
+9. Consider Proxmox worker for more frequent ingestion
+10. Also push to HallyAus/AI-News repo to keep it in sync (or archive it)
 
 ## Active Beads Issues
 
@@ -58,6 +65,7 @@ _Beads not yet initialised._
 
 ## Context
 
+- **Node.js:** 22.23.4 (`.nvmrc` and `.node-version`). `engines.node` is `>=22.23.4 <23`. Node 20 has no fix for the 21 Oct 2026 high-severity releases (including Brotli RCE CVE-2026-111497).
 - **Version:** v1.0.0 (tagged, pushed)
 - **Git remote:** HallyAus/AIMarketWire (Vercel auto-deploys from this)
 - **Old remote:** HallyAus/AI-News (still has older commits, not connected to Vercel)
@@ -72,6 +80,21 @@ _Beads not yet initialised._
 - LLM_PROVIDER env var in Vercel has trailing newline — code trims it, but should delete the env var
 
 ## Files Modified (This Session)
+
+```
+.nvmrc (new) — 22.23.4
+.node-version (new) — 22.23.4
+package.json — engines >=22.23.4 <23, @types/node ^22
+pnpm-lock.yaml — @types/node 22.20.5
+CLAUDE.md — runtime line
+specs/decisions.md — ADR-007
+strategy/learnings.md — Vercel major-only Node versions
+.claude/rules/memory-decisions.md
+.claude/rules/memory-sessions.md
+memory/HANDOFF.md
+```
+
+### Previous session files
 
 ```
 next.config.ts — security headers, redirects, version env var injection
