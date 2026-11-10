@@ -16,6 +16,18 @@
 
 <!-- Claude: add new entries at the top with incrementing ADR number -->
 
+### ADR-008: Pull-request CI runs on GitHub-hosted runners — 2026-11-10
+
+**Status:** Accepted
+
+**Context:** `.github/workflows/verify.yml` ran on the self-hosted label `personal-official` for `pull_request`, `push`, and `workflow_dispatch`. The repository is public. A fork pull request executes the workflow from the pull request, so an outsider can replace the steps and run them on the private machine. The job container `node:22-bookworm` was also the source of Node 22, git, and Corepack. `permissions: contents: read` was already set.
+
+**Decision:** Every job in a workflow an outsider can trigger runs on `ubuntu-latest`. `verify.yml` has no self-hosted `runs-on`. `actions/setup-node` (pinned by commit) installs Node from `.nvmrc` (22.23.4) before `.github/scripts/verify.sh`, which still enables Corepack and pnpm 10.30.2. The personal-runner gate and the same-repo pull-request skip are removed so fork pull requests run on the ephemeral runner. `push` and `workflow_dispatch` use that same job. No other workflow file targets a self-hosted runner. `dependabot.yml` does not execute jobs.
+
+**Consequences:** CI no longer depends on `PERSONAL_GITHUB_CI_ENABLED` or the private runner. A later workflow that names `personal-official` under `pull_request` (or `pull_request_target`, `issue_comment`, or any other event a fork can fire) reopens the hole. The runner registration itself is outside this repo; a pull request can still request that label until the runner stops accepting jobs from this public repository.
+
+---
+
 ### ADR-007: Pin Node.js to 22.23.4 — 2026-10-22
 
 **Status:** Accepted

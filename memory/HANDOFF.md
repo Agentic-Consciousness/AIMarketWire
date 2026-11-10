@@ -5,16 +5,23 @@
 
 ## Last Updated
 
-- **Date:** 2026-10-22
-- **Branch:** cursor/node-22-security-pin-ab1d
+- **Date:** 2026-11-10
+- **Branch:** cursor/github-hosted-pr-ci-5612
 - **Version:** v1.0.0
-- **Focus:** Pin Node.js to 22.23.4 after the 21 Oct 2026 security releases.
+- **Focus:** Move pull-request CI off the self-hosted runner onto `ubuntu-latest`.
 
 ## Accomplished
 
-### This Session (2026-10-22)
+### This Session (2026-11-10)
+- `.github/workflows/verify.yml` no longer uses `runs-on: [personal-official]` or the `node:22-bookworm` container. `pull_request`, `push`, and `workflow_dispatch` all run on `ubuntu-latest`.
+- `actions/setup-node` (pinned) installs Node from `.nvmrc` (22.23.4). `.github/scripts/verify.sh` still enables Corepack and pnpm 10.30.2, then runs lint, vitest, and the production build.
+- Dropped the `PERSONAL_GITHUB_CI_ENABLED` gate and the same-repo pull-request skip. Those only protected the private runner; fork pull requests now run on an ephemeral GitHub-hosted runner.
+- `permissions: contents: read` was already the workflow permission. `dependabot.yml` is the only other `.github` YAML and does not run jobs.
+- The runner label can still be requested by a future pull request until that runner stops accepting this public repository. That registration is outside the repo.
+
+### Previous session (2026-10-22)
 - Pinned the runtime off unpatched Node 20: `.nvmrc` and `.node-version` are `22.23.4`, `package.json` `engines.node` is `>=22.23.4 <23`, `@types/node` is `^22` (lockfile `22.20.5`)
-- No GitHub Actions workflow exists, so there is no `actions/setup-node` step to pin
+- At that date the repo had no GitHub Actions workflow, so there was no `actions/setup-node` step to pin. The 2026-11-10 session added one.
 - Verified on Node v22.23.4: `pnpm install`, `pnpm lint`, `pnpm exec tsc --noEmit`, and `pnpm build` all passed
 - Vercel only offers major Node versions and `engines` overrides the dashboard. Set Project Settings → Build and Deployment → Node.js Version to **22.x**, then redeploy. An engines range without `<23` would deploy 24.x
 
@@ -67,7 +74,7 @@ _Beads not yet initialised._
 
 - **Node.js:** 22.23.4 (`.nvmrc` and `.node-version`). `engines.node` is `>=22.23.4 <23`. Node 20 has no fix for the 21 Oct 2026 high-severity releases (including Brotli RCE CVE-2026-111497).
 - **Version:** v1.0.0 (tagged, pushed)
-- **Git remote:** HallyAus/AIMarketWire (Vercel auto-deploys from this)
+- **Git remote:** Agentic-Consciousness/AIMarketWire (public). HANDOFF previously recorded HallyAus/AIMarketWire; `origin` is Agentic-Consciousness/AIMarketWire. `verify.sh` accepts both.
 - **Old remote:** HallyAus/AI-News (still has older commits, not connected to Vercel)
 - Neon project: aimarketwire in ap-southeast-2, org-calm-flower-05958305
 - Vercel project: danieljhall-mecoms-projects/aimarketwire
@@ -82,13 +89,9 @@ _Beads not yet initialised._
 ## Files Modified (This Session)
 
 ```
-.nvmrc (new) — 22.23.4
-.node-version (new) — 22.23.4
-package.json — engines >=22.23.4 <23, @types/node ^22
-pnpm-lock.yaml — @types/node 22.20.5
-CLAUDE.md — runtime line
-specs/decisions.md — ADR-007
-strategy/learnings.md — Vercel major-only Node versions
+.github/workflows/verify.yml — ubuntu-latest + setup-node from .nvmrc
+specs/decisions.md — ADR-008
+strategy/learnings.md — self-hosted pull_request note
 .claude/rules/memory-decisions.md
 .claude/rules/memory-sessions.md
 memory/HANDOFF.md
