@@ -5,14 +5,20 @@
 
 ## Last Updated
 
-- **Date:** 2026-11-10
-- **Branch:** cursor/github-hosted-pr-ci-5612
+- **Date:** 2026-11-24
+- **Branch:** cursor/security-next-16.4.6-2362
 - **Version:** v1.0.0
-- **Focus:** Move pull-request CI off the self-hosted runner onto `ubuntu-latest`.
+- **Focus:** Patch Next.js 16.3.2 to 16.4.6 (October RSC RCE and 3 Nov 2026 security release).
 
 ## Accomplished
 
-### This Session (2026-11-10)
+### This Session (2026-11-24)
+- `next` and `eslint-config-next` pinned from 16.3.2 to 16.4.6. Lockfile regenerated with pnpm 10.30.2 (the version `verify.sh` activates).
+- `sharp` resolved 0.35.3 → 0.35.5 via `next@16.4.6`'s optional dependency `sharp@^0.35.5`. No sharp override added.
+- Lockfile has no `isomorphic-git`, `follow-redirects`, `undici`, or `qs`, so no overrides for those.
+- Baseline on `main` and the patch branch both passed frozen install, lint, `tsc --noEmit`, vitest (11), and `next build` on Node 22.23.4. No env vars required for the build.
+
+### Previous session (2026-11-10)
 - `.github/workflows/verify.yml` no longer uses `runs-on: [personal-official]` or the `node:22-bookworm` container. `pull_request`, `push`, and `workflow_dispatch` all run on `ubuntu-latest`.
 - `actions/setup-node` (pinned) installs Node from `.nvmrc` (22.23.4). `.github/scripts/verify.sh` still enables Corepack and pnpm 10.30.2, then runs lint, vitest, and the production build.
 - Dropped the `PERSONAL_GITHUB_CI_ENABLED` gate and the same-repo pull-request skip. Those only protected the private runner; fork pull requests now run on an ephemeral GitHub-hosted runner.
@@ -72,6 +78,7 @@ _Beads not yet initialised._
 
 ## Context
 
+- **Next.js:** 16.4.6 (`eslint-config-next` matches). `sharp` 0.35.5. Covers GHSA-xqc2-xf4c-x3h3, GHSA-673q-mjm6-r5xr, GHSA-2464-fhr4-w9xw, and the 3 Nov 2026 Next.js security release (16.4.5, included in 16.4.6).
 - **Node.js:** 22.23.4 (`.nvmrc` and `.node-version`). `engines.node` is `>=22.23.4 <23`. Node 20 has no fix for the 21 Oct 2026 high-severity releases (including Brotli RCE CVE-2026-111497).
 - **Version:** v1.0.0 (tagged, pushed)
 - **Git remote:** Agentic-Consciousness/AIMarketWire (public). HANDOFF previously recorded HallyAus/AIMarketWire; `origin` is Agentic-Consciousness/AIMarketWire. `verify.sh` accepts both.
@@ -87,6 +94,16 @@ _Beads not yet initialised._
 - LLM_PROVIDER env var in Vercel has trailing newline — code trims it, but should delete the env var
 
 ## Files Modified (This Session)
+
+```
+package.json — next and eslint-config-next 16.3.2 → 16.4.6
+pnpm-lock.yaml — next 16.4.6, sharp 0.35.5, matching @next/* and @img/sharp-*
+strategy/learnings.md — sharp optional dep and CI frozen-lockfile note
+.claude/rules/memory-sessions.md
+memory/HANDOFF.md
+```
+
+### Previous session files
 
 ```
 .github/workflows/verify.yml — ubuntu-latest + setup-node from .nvmrc
